@@ -1,0 +1,3 @@
+FROM scratch
+COPY fluxm2m /exe
+ENTRYPOINT ["/exe"]
