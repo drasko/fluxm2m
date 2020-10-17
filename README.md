@@ -1,13 +1,13 @@
-# FluxMQ
+# FluxM2M
 
-Mainflux MQTT broker.
+Mainflux [LwM2M](https://omaspecworks.org/what-is-oma-specworks/iot/lightweight-m2m-lwm2m/) server.
 
 ### Installation
 
-Installing FluxMQ is trivial [`go get`](https://golang.org/cmd/go/):
+Installing FluxM2M is trivial [`go get`](https://golang.org/cmd/go/):
 ```bash
-go get github.com/mainflux/fluxmq
-$GOBIN/fluxmq
+go get github.com/mainflux/fluxm2m
+$GOBIN/fluxm2m
 ```
 
 ### Documentation
