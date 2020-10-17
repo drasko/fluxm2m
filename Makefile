@@ -30,7 +30,7 @@ test:
 proto:
 	protoc --go_out=plugins=grpc:. *.proto
 
-fluxmq:
+fluxm2m:
 	$(call compile_service,$(@))
 
 docker:

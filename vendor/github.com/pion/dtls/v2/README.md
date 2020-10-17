@@ -10,7 +10,7 @@
   <a href="https://pion.ly/slack"><img src="https://img.shields.io/badge/join-us%20on%20slack-gray.svg?longCache=true&logo=slack&colorB=brightgreen" alt="Slack Widget"></a>
   <br>
   <a href="https://travis-ci.org/pion/dtls"><img src="https://travis-ci.org/pion/dtls.svg?branch=master" alt="Build Status"></a>
-  <a href="https://godoc.org/github.com/pion/dtls"><img src="https://godoc.org/github.com/pion/dtls?status.svg" alt="GoDoc"></a>
+  <a href="https://pkg.go.dev/github.com/pion/dtls"><img src="https://godoc.org/github.com/pion/dtls?status.svg" alt="GoDoc"></a>
   <a href="https://codecov.io/gh/pion/dtls"><img src="https://codecov.io/gh/pion/dtls/branch/master/graph/badge.svg" alt="Coverage Status"></a>
   <a href="https://goreportcard.com/report/github.com/pion/dtls"><img src="https://goreportcard.com/badge/github.com/pion/dtls" alt="Go Report Card"></a>
   <a href="https://www.codacy.com/app/Sean-Der/dtls"><img src="https://api.codacy.com/project/badge/Grade/18f4aec384894e6aac0b94effe51961d" alt="Codacy Badge"></a>
@@ -18,9 +18,11 @@
 </p>
 <br>
 
-Go DTLS 1.2 implementation. The original user is pion-WebRTC, but we would love to see it work for everyone.
+Native [DTLS 1.2][rfc6347] implementation in the Go programming language.
 
 A long term goal is a professional security review, and maye inclusion in stdlib.
+
+[rfc6347]: https://tools.ietf.org/html/rfc6347
 
 ### Goals/Progress
 This will only be targeting DTLS 1.2, and the most modern/common cipher suites.
@@ -40,12 +42,15 @@ We would love contributes that fall under the 'Planned Features' and fixing any 
 #### Supported ciphers
 
 ##### ECDHE
+* TLS_ECDHE_ECDSA_WITH_AES_128_CCM ([RFC 6655][rfc6655])
+* TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8 ([RFC 6655][rfc6655])
 * TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 ([RFC 5289][rfc5289])
 * TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 ([RFC 5289][rfc5289])
 * TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA ([RFC 8422][rfc8422])
 * TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA ([RFC 8422][rfc8422])
 
 ##### PSK
+* TLS_PSK_WITH_AES_128_CCM ([RFC 6655][rfc6655])
 * TLS_PSK_WITH_AES_128_CCM_8 ([RFC 6655][rfc6655])
 * TLS_PSK_WITH_AES_128_GCM_SHA256 ([RFC 5487][rfc5487])
 
@@ -64,15 +69,18 @@ We would love contributes that fall under the 'Planned Features' and fixing any 
 
 ### Using
 
+This library needs at least Go 1.13, and you should have [Go modules
+enabled](https://github.com/golang/go/wiki/Modules).
+
 #### Pion DTLS
 For a DTLS 1.2 Server that listens on 127.0.0.1:4444
 ```sh
-go run examples/listen/main.go
+go run examples/listen/selfsign/main.go
 ```
 
 For a DTLS 1.2 Client that connects to 127.0.0.1:4444
 ```sh
-go run examples/dial/main.go
+go run examples/dial/selfsign/main.go
 ```
 
 #### OpenSSL
@@ -83,10 +91,10 @@ Pion DTLS can connect to itself and OpenSSL.
   openssl req -new -sha256 -key key.pem -out server.csr
   openssl x509 -req -sha256 -days 365 -in server.csr -signkey key.pem -out cert.pem
 
-  // Use with examples/dial/main.go
+  // Use with examples/dial/selfsign/main.go
   openssl s_server -dtls1_2 -cert cert.pem -key key.pem -accept 4444
 
-  // Use with examples/listen/main.go
+  // Use with examples/listen/selfsign/main.go
   openssl s_client -dtls1_2 -connect 127.0.0.1:4444 -debug -cert cert.pem -key key.pem
 ```
 
@@ -96,19 +104,19 @@ Pion DTLS also comes with examples that do key exchange via PSK
 
 #### Pion DTLS
 ```sh
-go run examples/listen-psk/main.go
+go run examples/listen/psk/main.go
 ```
 
 ```sh
-go run examples/dial-psk/main.go
+go run examples/dial/psk/main.go
 ```
 
 #### OpenSSL
 ```
-  // Use with examples/dial-psk/main.go
+  // Use with examples/dial/psk/main.go
   openssl s_server -dtls1_2 -accept 4444 -nocert -psk abc123 -cipher PSK-AES128-CCM8
 
-  // Use with examples/listen-psk/main.go
+  // Use with examples/listen/psk/main.go
   openssl s_client -dtls1_2 -connect 127.0.0.1:4444 -psk abc123 -cipher PSK-AES128-CCM8
 ```
 
@@ -118,7 +126,7 @@ Check out the **[contributing wiki](https://github.com/pion/webrtc/wiki/Contribu
 * [Sean DuBois](https://github.com/Sean-Der) - *Original Author*
 * [Michiel De Backker](https://github.com/backkem) - *Public API*
 * [Chris Hiszpanski](https://github.com/thinkski) - *Support Signature Algorithms Extension*
-* [Iñigo Garcia Olaizola](https://github.com/igolaizola) - *Serialization & resumption, cert verification*
+* [Iñigo Garcia Olaizola](https://github.com/igolaizola) - *Serialization & resumption, cert verification, E2E*
 * [Daniele Sluijters](https://github.com/daenney) - *AES-CCM support*
 * [Jin Lei](https://github.com/jinleileiking) - *Logging*
 * [Hugo Arregui](https://github.com/hugoArregui)
@@ -129,6 +137,10 @@ Check out the **[contributing wiki](https://github.com/pion/webrtc/wiki/Contribu
 * [Hayden James](https://github.com/hjames9)
 * [Jozef Kralik](https://github.com/jkralik)
 * [Robert Eperjesi](https://github.com/epes)
+* [Atsushi Watanabe](https://github.com/at-wat)
+* [Julien Salleyron](https://github.com/juliens) - *Server Name Indication*
+* [Jeroen de Bruijn](https://github.com/vidavidorra)
+* [bjdgyc](https://github.com/bjdgyc)
 
 ### License
 MIT License - see [LICENSE](LICENSE) for full text

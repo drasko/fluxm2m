@@ -1,12 +1,12 @@
 package dtls
 
 import (
+	"context"
 	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/tls"
 	"crypto/x509"
 	"time"
-
-	"golang.org/x/crypto/ed25519"
 
 	"github.com/pion/logging"
 )
@@ -17,12 +17,14 @@ type Config struct {
 	// Certificates contains certificate chain to present to the other side of the connection.
 	// Server MUST set this if PSK is non-nil
 	// client SHOULD sets this so CertificateRequests can be handled if PSK is non-nil
-	// TODO: add support to use more certificates then one.
 	Certificates []tls.Certificate
 
 	// CipherSuites is a list of supported cipher suites.
 	// If CipherSuites is nil, a default list is used
 	CipherSuites []CipherSuiteID
+
+	// SignatureSchemes contains the signature and hash schemes that the peer requests to verify.
+	SignatureSchemes []tls.SignatureScheme
 
 	// SRTPProtectionProfiles are the supported protection profiles
 	// Clients will send this via use_srtp and assert that the server properly responds
@@ -54,6 +56,10 @@ type Config struct {
 	// This should be used only for testing.
 	InsecureSkipVerify bool
 
+	// InsecureHashes allows the use of hashing algorithms that are known
+	// to be vulnerable.
+	InsecureHashes bool
+
 	// VerifyPeerCertificate, if not nil, is called after normal
 	// certificate verification by either a client or server. It
 	// receives the certificate provided by the peer and also a flag
@@ -83,20 +89,35 @@ type Config struct {
 
 	LoggerFactory logging.LoggerFactory
 
-	// ConnectTimeout is the timeout threshold for new connection handshakes
-	// to complete (default is 30 seconds)
-	ConnectTimeout *time.Duration
+	// ConnectContextMaker is a function to make a context used in Dial(),
+	// Client(), Server(), and Accept(). If nil, the default ConnectContextMaker
+	// is used. It can be implemented as following.
+	//
+	// 	func ConnectContextMaker() (context.Context, func()) {
+	// 		return context.WithTimeout(context.Background(), 30*time.Second)
+	// 	}
+	ConnectContextMaker func() (context.Context, func())
 
 	// MTU is the length at which handshake messages will be fragmented to
 	// fit within the maximum transmission unit (default is 1200 bytes)
 	MTU int
+
+	// ReplayProtectionWindow is the size of the replay attack protection window.
+	// Duplication of the sequence number is checked in this window size.
+	// Packet with sequence number older than this value compared to the latest
+	// accepted packet will be discarded. (default is 64)
+	ReplayProtectionWindow int
 }
 
-const defaultConnectTimeout = 30 * time.Second
+func defaultConnectContextMaker() (context.Context, func()) {
+	return context.WithTimeout(context.Background(), 30*time.Second)
+}
 
-// ConnectTimeoutOption simply provides a wrapper for creating a *time.Duration
-func ConnectTimeoutOption(timeout time.Duration) *time.Duration {
-	return &timeout
+func (c *Config) connectContextMaker() (context.Context, func()) {
+	if c.ConnectContextMaker == nil {
+		return defaultConnectContextMaker()
+	}
+	return c.ConnectContextMaker()
 }
 
 const defaultMTU = 1200 // bytes
