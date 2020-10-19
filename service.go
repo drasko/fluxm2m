@@ -20,7 +20,7 @@ type Service interface {
 	Subscribe(ctx context.Context) error
 
 	// Unsubscribe
-	Unsubscribe(ctx context.Context) error
+	Unsubscribe(ctx context.Context, token string) error
 
 	// Publish
 	Publish(ctx context.Context) error

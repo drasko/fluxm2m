@@ -1,5 +1,13 @@
 # github.com/dsnet/golib/memfile v0.0.0-20200723050859-c110804dfa93
 github.com/dsnet/golib/memfile
+# github.com/go-kit/kit v0.10.0
+github.com/go-kit/kit/log
+# github.com/go-logfmt/logfmt v0.5.0
+github.com/go-logfmt/logfmt
+# github.com/mainflux/mainflux v0.11.0
+## explicit
+github.com/mainflux/mainflux/errors
+github.com/mainflux/mainflux/logger
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 github.com/patrickmn/go-cache
 # github.com/pion/dtls/v2 v2.0.1-0.20200503085337-8e86b3a7d585
@@ -39,13 +47,14 @@ github.com/plgd-dev/kit/sync
 golang.org/x/crypto/cryptobyte
 golang.org/x/crypto/cryptobyte/asn1
 golang.org/x/crypto/curve25519
-# golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
+# golang.org/x/net v0.0.0-20200513185701-a91f0712d120
 golang.org/x/net/bpf
 golang.org/x/net/internal/iana
 golang.org/x/net/internal/socket
 golang.org/x/net/ipv4
 golang.org/x/net/ipv6
-# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+# golang.org/x/sys v0.0.0-20200513112337-417ce2331b5c
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543

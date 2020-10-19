@@ -7,10 +7,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/mainflux/mainflux/errors"
 	log "github.com/mainflux/mainflux/logger"
 
 	lwm2m "github.com/drasko/fluxm2m"
-	"github.com/mainflux/mainflux/pkg/errors"
 	"github.com/plgd-dev/go-coap/v2/message"
 	"github.com/plgd-dev/go-coap/v2/message/codes"
 	"github.com/plgd-dev/go-coap/v2/mux"
