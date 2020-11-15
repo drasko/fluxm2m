@@ -1,0 +1,8 @@
+# FluxM2M
+build
+
+# Visual Studio Code
+.vscode
+
+# Binary
+fluxm2m
